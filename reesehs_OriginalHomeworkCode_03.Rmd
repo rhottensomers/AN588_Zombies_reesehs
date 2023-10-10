@@ -1,0 +1,105 @@
+---
+title: "reesehs_OriginalHomeworkCode_03"
+author: "Reese Hotten-Somers"
+date: "2023-10-10"
+output: rmdformats::readthedown
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(curl)
+f <- curl("https://raw.githubusercontent.com/fuzzyatelin/fuzzyatelin.github.io/master/AN588_Fall23/zombies.csv") #imports data
+d <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)  #reads data and creates data frame from it
+head(d) #returns data frame
+```
+
+## Question One: Calculate the population mean and standard deviation for each quantitative random variable (height, weight, age, number of zombies killed, and years of education). NOTE: You will not want to use the built in var() and sd() commands as these are for samples.
+
+```{r, q1}
+height <- (d$height)
+mh <- mean(height)
+sqrt(sum((height - mean(height))^2)/length(height))
+
+weight <- (d$weight)
+mean(weight)
+sqrt(sum((weight - mean(weight))^2)/length(weight))
+
+age <- (d$age)
+mean(age)
+sqrt(sum((age - mean(age))^2)/length(age))
+
+zk <- (d$zombies_killed)
+mean(zk)
+sqrt(sum((zk - mean(zk))^2)/length(zk))
+
+yoedu <- (d$years_of_education)
+mean(yoedu)
+sqrt(sum((yoedu - mean(yoedu))^2)/length(yoedu))
+```
+
+## Question 2: Use {ggplot} to make boxplots of each of these variables by gender
+
+```{r, q2}
+library(ggplot2)
+
+p <- ggplot(data = d, aes(x = gender, y = height))
+p <- p + geom_boxplot() 
+p <- p + theme(axis.text.x = element_text(angle = 90))
+p <- p + ylab("Height")
+p
+
+
+w <- ggplot(data = d, aes(x = gender, y = weight))
+w <- w + geom_boxplot() 
+w <- w + theme(axis.text.x = element_text(angle = 90))
+w <- w + ylab("Weight")
+w
+
+a <- ggplot(data = d, aes(x = gender, y = age))
+a <- a + geom_boxplot() 
+a <- a + theme(axis.text.x = element_text(angle = 90))
+a <- a + ylab("Age")
+a
+
+zn <- ggplot(data = d, aes(x = gender, y = zk))
+zn <- zn + geom_boxplot() 
+zn <- zn + theme(axis.text.x = element_text(angle = 90))
+zn <- zn + ylab("Number of Zombies Killed")
+zn
+
+ey <- ggplot(data = d, aes(x = gender, y = yoedu))
+ey <- ey + geom_boxplot() 
+ey <- ey + theme(axis.text.x = element_text(angle = 90))
+ey <- ey + ylab("Years of Education")
+ey
+
+```
+
+## Question 3: Use {ggplot} to make scatterplots of height and weight in relation to age. Do these variables seem to be related? In what way? 
+
+```{r, q3}
+p <- ggplot(data = d, aes(x = age), aes(y = height),
+p <- p + xlab("log(Female Body Mass)") + ylab("log(Female Brain Size)")  # then we modify the axis labels
+p <- p + geom_point()  # then we make a scatterplot
+p <- p + theme(legend.position = "bottom", legend.title = element_blank())  # then we modify the legend
+p 
+```
+
+## Question 4: Using histograms and Q-Q plots, check whether the quantitative variables seem to be drawn from a normal distribution. Which seem to be and which do not (hint: not all are drawn from the normal distribution)? For those that are not normal, can you determine from which common distribution they are drawn?
+
+```{r, q4}
+hist(height, probability = TRUE)
+
+
+hist(weight, probability = TRUE)
+hist(age, probability = TRUE)
+hist(zk, probability = TRUE)
+hist(yoedu, probability = TRUE)
+```
+
+## Question 5: Now use the sample() function to sample ONE subset of 30 zombie survivors (without replacement) from this population and calculate the mean and sample standard deviation for each variable. Also estimate the standard error for each variable, and construct the 95% confidence interval for each mean. Note that for the variables that are not drawn from the normal distribution, you may need to base your estimate of the CIs on slightly different code than for the normal…
+
+## Question 6:L Now draw 99 more random samples of 30 zombie apocalypse survivors, and calculate the mean for each variable for each of these samples. Together with the first sample you drew, you now have a set of 100 means for each variable (each based on 30 observations), which constitutes a sampling distribution for each variable. What are the means and standard deviations of this distribution of means for each variable? How do the standard deviations of means compare to the standard errors estimated in [5]? What do these sampling distributions look like (a graph might help here)? Are they normally distributed? What about for those variables that you concluded were not originally drawn from a normal distribution?
