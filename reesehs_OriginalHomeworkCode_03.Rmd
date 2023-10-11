@@ -14,30 +14,40 @@ library(curl)
 f <- curl("https://raw.githubusercontent.com/fuzzyatelin/fuzzyatelin.github.io/master/AN588_Fall23/zombies.csv") #imports data
 d <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)  #reads data and creates data frame from it
 head(d) #returns data frame
+
+#library(base)
+#f <- "~/Desktop/zombies.csv"
+#d <- read.table(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+#head(d)
+
+
 ```
+
 
 ## Question One: Calculate the population mean and standard deviation for each quantitative random variable (height, weight, age, number of zombies killed, and years of education). NOTE: You will not want to use the built in var() and sd() commands as these are for samples.
 
 ```{r, q1}
+
 height <- (d$height)
 mh <- mean(height)
 sqrt(sum((height - mean(height))^2)/length(height))
 
 weight <- (d$weight)
-mean(weight)
+mw <- mean(weight)
 sqrt(sum((weight - mean(weight))^2)/length(weight))
 
 age <- (d$age)
-mean(age)
+ma <- mean(age)
 sqrt(sum((age - mean(age))^2)/length(age))
 
 zk <- (d$zombies_killed)
-mean(zk)
+mzk <- mean(zk)
 sqrt(sum((zk - mean(zk))^2)/length(zk))
 
 yoedu <- (d$years_of_education)
-mean(yoedu)
+myoedu <- mean(yoedu)
 sqrt(sum((yoedu - mean(yoedu))^2)/length(yoedu))
+
 ```
 
 ## Question 2: Use {ggplot} to make boxplots of each of these variables by gender
@@ -81,25 +91,93 @@ ey
 ## Question 3: Use {ggplot} to make scatterplots of height and weight in relation to age. Do these variables seem to be related? In what way? 
 
 ```{r, q3}
-p <- ggplot(data = d, aes(x = age), aes(y = height),
-p <- p + xlab("log(Female Body Mass)") + ylab("log(Female Brain Size)")  # then we modify the axis labels
-p <- p + geom_point()  # then we make a scatterplot
-p <- p + theme(legend.position = "bottom", legend.title = element_blank())  # then we modify the legend
-p 
+library(ggplot2)
+hg <- ggplot(data = d, aes(x = age, y = height)) + geom_point() + xlab("age") + ylab("height") + theme(legend.position = "bottom", legend.title = element_blank())  # then we modify the legend
+hg 
+
+wg <- ggplot(data = d, aes(x = age, y = weight)) + geom_point() + xlab("age") + ylab("weight") + theme(legend.position = "bottom", legend.title = element_blank())  # then we modify the legend
+wg
 ```
 
 ## Question 4: Using histograms and Q-Q plots, check whether the quantitative variables seem to be drawn from a normal distribution. Which seem to be and which do not (hint: not all are drawn from the normal distribution)? For those that are not normal, can you determine from which common distribution they are drawn?
 
 ```{r, q4}
 hist(height, probability = TRUE)
-
+qqnorm(height, main = "Normal QQ plot random normal variables")
+qqline(height, col = "gray")
 
 hist(weight, probability = TRUE)
+qqnorm(weight, main = "Normal QQ plot random normal variables")
+qqline(weight, col = "gray")
+
 hist(age, probability = TRUE)
+qqnorm(age, main = "Normal QQ plot random normal variables")
+qqline(age, col = "gray")
+
 hist(zk, probability = TRUE)
+qqnorm(zk, main = "Normal QQ plot random normal variables")
+qqline(zk, col = "gray")
+
 hist(yoedu, probability = TRUE)
+qqnorm(yoedu, main = "Normal QQ plot random normal variables")
+qqline(yoedu, col = "gray")
 ```
 
 ## Question 5: Now use the sample() function to sample ONE subset of 30 zombie survivors (without replacement) from this population and calculate the mean and sample standard deviation for each variable. Also estimate the standard error for each variable, and construct the 95% confidence interval for each mean. Note that for the variables that are not drawn from the normal distribution, you may need to base your estimate of the CIs on slightly different code than for the normal…
+
+```{r, q5}
+sample(d, 30, replace = FALSE)
+#in this case the length of d is only 10 so this doesn't work
+
+#height
+hs <- sample(height, 30, replace = FALSE)
+mean(hs)
+sdhs <- sd(hs) # I'm honestly a little confused on the difference between sample standard deviation and standard error? 
+hsse <- sdhs/sqrt(30)
+lower <- mh - qnorm(1 - 0.05/2) * hsse  # (1-alpha)/2 each in the upper and lower tails of the distribution
+upper <- mh + qnorm(1 - 0.05/2) * hsse  # (1-alpha)/2 each in the upper and lower tails of the distribution
+ci <- c(lower, upper)
+ci
+
+#weight
+ws <- sample(weight, 30, replace = FALSE)
+ws
+mean(hs)
+sdws <- sd(hs)
+sdws
+sews <- sdws/sqrt(30)
+sews
+lower <- mh - qnorm(1 - 0.05/2) * sews  # (1-alpha)/2 each in the upper and lower tails of the distribution
+upper <- mh + qnorm(1 - 0.05/2) * sews  # (1-alpha)/2 each in the upper and lower tails of the distribution
+ci <- c(lower, upper)
+ci
+
+#age
+as <- sample(age, 30, replace = FALSE)
+as
+mean(as)
+sdas <- sd(as)
+sdas
+seas <- sdas/sqrt(30)
+seas
+lower <- mh - qnorm(1 - 0.05/2) * seas  # (1-alpha)/2 each in the upper and lower tails of the distribution
+upper <- mh + qnorm(1 - 0.05/2) * seas  # (1-alpha)/2 each in the upper and lower tails of the distribution
+ci <- c(lower, upper)
+ci
+
+#zombies killed
+zks <- sample(zk, 30, replace = FALSE)
+zks
+mean(zks)
+sdzks <- sd(zks)
+sdzks
+
+
+#years of education
+edus <- sample(yoedu, 30, replace = FALSE)
+
+
+```
+
 
 ## Question 6:L Now draw 99 more random samples of 30 zombie apocalypse survivors, and calculate the mean for each variable for each of these samples. Together with the first sample you drew, you now have a set of 100 means for each variable (each based on 30 observations), which constitutes a sampling distribution for each variable. What are the means and standard deviations of this distribution of means for each variable? How do the standard deviations of means compare to the standard errors estimated in [5]? What do these sampling distributions look like (a graph might help here)? Are they normally distributed? What about for those variables that you concluded were not originally drawn from a normal distribution?
