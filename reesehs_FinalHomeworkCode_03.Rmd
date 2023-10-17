@@ -1,0 +1,338 @@
+---
+title: "reesehs_FinalHomeworkCode_03"
+author: "Reese Hotten-Somers"
+date: "2023-10-16"
+output: rmdformats::readthedown
+---
+![This zombie is so sad, give them back their hand!](Zombie Picture.png) 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, data}
+library(curl)
+f <- curl("https://raw.githubusercontent.com/fuzzyatelin/fuzzyatelin.github.io/master/AN588_Fall23/zombies.csv") #imports data about zombies
+d <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)  #reads data and creates data frame from it
+head(d) #returns data frame
+
+```
+
+
+## Question One: Calculate the population mean and standard deviation for each quantitative random variable (height, weight, age, number of zombies killed, and years of education). NOTE: You will not want to use the built in var() and sd() commands as these are for samples.
+
+```{r, q1}
+#height
+height <- (d$height) #takes data from the column height in the data from d
+height
+mh <- mean(height) #takes the mean of the height data
+mh
+sqrt(sum((height - mean(height))^2)/length(height)) #calculates the standard deviation of height data
+
+#weight
+weight <- (d$weight)
+weight
+mw <- mean(weight)
+mw
+sqrt(sum((weight - mean(weight))^2)/length(weight))
+
+#age
+age <- (d$age)
+age
+ma <- mean(age)
+ma
+sqrt(sum((age - mean(age))^2)/length(age))
+
+#number of zombies killed
+zk <- (d$zombies_killed)
+zk
+mzk <- mean(zk)
+mzk
+sqrt(sum((zk - mean(zk))^2)/length(zk))
+
+#years of education
+yoedu <- (d$years_of_education)
+yoedu
+myoedu <- mean(yoedu)
+myoedu
+sqrt(sum((yoedu - mean(yoedu))^2)/length(yoedu))
+
+#vbhavya Peer comment: I like the way you named your variables. It's quite easy to keep track of. I use x,y and z repeatedly so it variables keep being rewritten and I sometimes can't use them again. Your way seems so intuitive but I didn't think of it. 
+
+```
+
+## Question 2: Use {ggplot} to make boxplots of each of these variables by gender
+
+```{r, q2}
+library(ggplot2)
+
+#height
+h <- ggplot(data = d, aes(x = gender, y = height, color = factor(gender))) + geom_boxplot() + ylab("Height") #creates box plot of height and gender with colors based on gender and labels y axis
+h
+
+#weight
+w <- ggplot(data = d, aes(x = gender, y = weight, color = factor(gender))) + geom_boxplot() + ylab("Weight")
+w
+
+#age
+a <- ggplot(data = d, aes(x = gender, y = age, color = factor(gender))) + geom_boxplot() + ylab("Age")
+a
+
+#number of zombies killed
+zn <- ggplot(data = d, aes(x = gender, y = zk, color = factor(gender))) + geom_boxplot() + ylab("Number of Zombies Killed")
+zn
+
+#years of education
+ey <- ggplot(data = d, aes(x = gender, y = yoedu, color = factor(gender)))+ geom_boxplot() + ylab("Years of Education")
+ey
+
+#vbhavya Peer comments: 
+# 1. I like how you did name each plot. Again, I'm often in such a rush that I forget to do that. It's a great practice. 
+# 2. I don't actually think you need to do the multiple steps in ggplot to add details into a graph. I know that's how Chris did it in the modules and it's probably a good practice. But I wrote this code: p <- ggplot(data = d, aes(x = gender, y = age,
+#color = factor(gender))) + geom_boxplot()
+#p
+#It still works. Just letting you know so you can choose the way you prefer. A part of learning how to code is figuring out which way you like to code. 
+# 3. You might want to experiment with different themes or add colors to the graph. This isn't necessary but it helps with visualisation to have different colors (especially when you evetually make figures for reports or papers)
+```
+
+## Question 3: Use {ggplot} to make scatterplots of height and weight in relation to age. Do these variables seem to be related? In what way? 
+
+```{r, q3}
+hg <- ggplot(data = d, aes(x = age, y = height)) + geom_point() + xlab("age") + ylab("height") + theme(legend.position = "bottom", legend.title = element_blank()) #creates scatter plot ggplot using data from age and height(in data frame d) with x and y axises labeled
+hg 
+
+wg <- ggplot(data = d, aes(x = age, y = weight)) + geom_point() + xlab("age") + ylab("weight") + theme(legend.position = "bottom", legend.title = element_blank()) #scatter plot with age and weight 
+wg
+
+
+#vbhavya Peer comment: Just something to think about: are there differences between how height and weight vary with age? Now that we've also been introduced to linear regression, it might be useful to think about this relationship in terms of where the best fit regression would be. Again, you've done what was asked of you really well. But I think it's fun to think of how age affects the two variables differently. In fact, the age-height plot doesn't even look linear but that might just be me overthinking. 
+```
+  As age increases so do both weight and height, indicating a positive linear relationship. The scatter plots demonstrate an upward slope that shows this relationship. However, weight and age have a less linear/postive relationship than age and height as the point are less formed along a line.
+  
+  
+## Question 4: Using histograms and Q-Q plots, check whether the quantitative variables seem to be drawn from a normal distribution. Which seem to be and which do not (hint: not all are drawn from the normal distribution)? For those that are not normal, can you determine from which common distribution they are drawn?
+
+```{r, q4}
+hist(height, probability = TRUE) #creates histogram using height data and comparing the probability
+qqnorm(height, main = "Normal QQ plot random normal variables")  #creates qqnorm graph to test normal distribution
+qqline(height, col = "gray") #create line that is the normal distribution
+
+hist(weight, probability = TRUE)
+qqnorm(weight, main = "Normal QQ plot random normal variables")
+qqline(weight, col = "gray")
+
+hist(age, probability = TRUE)
+qqnorm(age, main = "Normal QQ plot random normal variables")
+qqline(age, col = "gray")
+
+hist(zk, probability = TRUE)
+qqnorm(zk, main = "Normal QQ plot random normal variables")
+qqline(zk, col = "gray")
+
+hist(yoedu, probability = TRUE)
+qqnorm(yoedu, main = "Normal QQ plot random normal variables")
+qqline(yoedu, col = "gray")
+
+
+
+#vbhavya Peer comment: I too had a really hard time figuring out what distribution the data were drawn from. To me, it seems Poisson (and I had to discuss with some of the other grad students to come to a conclusion). But it probably is poisson because if you look at the histogram, you see the distribution looks very similar to what a general Poisson looks like. I also googled a bit after I pushed the HW assignment and stumbled upon this https://stackoverflow.com/questions/31741742/how-to-identify-the-distribution-of-the-given-data-using-r where people share much better ways to figure out the distribution of a sample dataframe. I will give it a try for my final code and we can discuss it later if you'd like!
+```
+
+  Height, age, and weight all seem to be normally distributed due to their histograms following a normal Gaussian bell curve, and their data following the normal qq line. 
+  
+  However, number of zombies killed and years of education are not normally distributed. Their histograms are left shifted and do not follow the normal Gaussian curve. They are possibly drawn to a poisson distribution. Poisson histograms can often be drawn to one side or the other due to their random nature.This is also seen in the disjointed nature of the data in the qq line graphs. 
+  
+## Question 5: Now use the sample() function to sample ONE subset of 30 zombie survivors (without replacement) from this population and calculate the mean and sample standard deviation for each variable. Also estimate the standard error for each variable, and construct the 95% confidence interval for each mean. Note that for the variables that are not drawn from the normal distribution, you may need to base your estimate of the CIs on slightly different code than for the normal…
+
+```{r, q5}
+#sample(d, 30, replace = FALSE)
+#in this case the length of d is only 10 so this doesn't work
+
+#height
+hs <- sample(height, 30, replace = FALSE) #takes a random sample of 30 from the height dataset
+hs#returns the sample
+mhs <- mean(hs) #takes mean of the 30 samples
+mhs
+sdhs <- sd(hs) # takes standard deviation of the sample
+sdhs
+hsse <- sdhs/sqrt(30) #takes standard error of the 30 samples
+hsse
+lower <- mh - qnorm(1 - 0.05/2) * hsse #lower tail
+upper <- mh + qnorm(1 - 0.05/2) * hsse #upper tail 
+ci <- c(lower, upper) #calculates the confidence interval
+ci
+
+#weight
+ws <- sample(weight, 30, replace = FALSE)
+ws
+mws <- mean(ws)
+mws
+sdws <- sd(ws)
+sdws
+sews <- sdws/sqrt(30)
+sews
+lower <- mw - qnorm(1 - 0.05/2) * sews  
+upper <- mw + qnorm(1 - 0.05/2) * sews 
+ci <- c(lower, upper)
+ci
+
+#age
+as <- sample(age, 30, replace = FALSE)
+as
+mas <- mean(as)
+mas
+sdas <- sd(as)
+sdas
+seas <- sdas/sqrt(30)
+seas
+lower <- ma - qnorm(1 - 0.05/2) * seas  
+upper <- ma + qnorm(1 - 0.05/2) * seas 
+ci <- c(lower, upper)
+ci
+
+```
+
+Both zombies killed and years of education did not have both normal distributions so that requires a different way to get their confidence intervals than the methods above.
+
+```{r, non normal}
+#zombies killed
+zks <- sample(zk, 30, replace = FALSE)
+zks
+mzks <- mean(zks)
+mzks
+sdzks <- sd(zks)
+sdzks
+sezks <- sdzks/sqrt(30)
+sezks
+quantile(zks)
+quantile(zks, c(0.025, 0.975)) #returns CI for a non-normal distribution, also known as bootstraping
+
+
+#years of education
+edus <- sample(yoedu, 30, replace = FALSE)
+edus
+medus <- mean(edus)
+sdedu <- sd(edus)
+sdedu
+seedu <- sdedu/sqrt(30)
+seedu
+quantile(edus)
+quantile(edus, c(0.025, 0.975)) #returns CI for a non-normal distribution 
+
+
+#vbhavya Peer comment: So, I did this very round about way in which I approximated the Poisson distributions to a normal distribution (you can do that by calculating population mean, which will be the lambda. Then, for a normal approximation of a poisson, you can do rnorm(n = 30, mean = lambda, sd = sqrt(lambda))). I only thought of this way because I learnt in one of my stats courses that distributions can be approximated to another distribution but I honestly don't know if what I've done is right. I only converted the poisson to a normal so I could proceed with the usual code for CI. 
+#I think using a t-distribution to find the critical values might be a much better way. I don't see why it would be wrong. 
+#One of my friends googled 'how to calculate the CIs for a poisson distribution sample' and that worked for them too. But you'd need to know that the sample is drawn from a Poisson for that. 
+
+```
+
+## Question 6: Now draw 99 more random samples of 30 zombie apocalypse survivors, and calculate the mean for each variable for each of these samples. Together with the first sample you drew, you now have a set of 100 means for each variable (each based on 30 observations), which constitutes a sampling distribution for each variable. What are the means and standard deviations of this distribution of means for each variable? 
+
+```{r, q6}
+#height
+hs2 <- NULL  # sets up a dummy variable
+n <- 30 #number of samples 
+for (i in 1:99) {
+    hs2[[i]] <- mean(sample(height, n, replace = FALSE))
+} #draws 99 samples with 30 random numbers from height data set and takes the mean of each sample set
+hs2 <- append(hs2, mhs, after = 99) #adds the mean from question 5 to the list
+hs2 <- unlist(hs2) #unlist the variable
+hs2
+mean(hs2) # takes the mean
+sd(hs2) #takes the standard deviation
+
+
+#weight
+ws2 <- NULL
+for (i in 1:99) {
+    ws2[[i]] <- mean(sample(weight, n, replace = FALSE))
+}
+ws2 <- append(ws2, mws, after = 99)
+ws2 <- unlist(ws2)
+ws2
+mean(ws2)
+sd(ws2)
+
+#age
+as2 <- NULL
+for (i in 1:99) {
+    as2[[i]] <- mean(sample(age, n, replace = FALSE))
+}
+as2 <- append(as2, mas, after = 99)
+as2 <- unlist(as2)
+as2
+mean(as2)
+sd(as2)
+
+
+#zombies killed
+zks2 <- NULL
+for (i in 1:99) {
+    zks2[[i]] <- mean(sample(zk, n, replace = FALSE))
+}
+zks2 <- append(zks2, mzks, after = 99) #adds the mean from the sample in question 5 
+zks2 <- unlist(zks2)
+zks2
+mean(zks2)
+sd(zks2)
+
+
+#years of education
+yedus2 <- NULL
+for (i in 1:99) {
+    yedus2[[i]] <- mean(sample(yoedu, n, replace = FALSE))
+}
+yedus2 <- append(yedus2, medus, after = 99)
+yedus2 <- unlist(yedus2)
+yedus2
+mean(yedus2)
+sd(yedus2)
+```
+
+## How do the standard deviations of means compare to the standard errors estimated in [5]?
+All of the SEs from question 5were higher than the SDs. For example height SE was 0.8527719 and the SD of the means was 0.7719534.
+
+## What do these sampling distributions look like (a graph might help here)? Are they normally distributed? What about for those variables that you concluded were not originally drawn from a normal distribution?
+
+```{r,q6graphs}
+#height
+hist(hs2, probability = TRUE) #create histogram from sample distribution calculated in chunk above
+qqnorm(hs2, main = "Normal QQ plot random normal variables")  #plots qqnorm graph based of hs2 data
+qqline(hs2, col = "gray") #plot qqline 
+
+#weight
+hist(ws2, probability = TRUE)
+qqnorm(ws2, main = "Normal QQ plot random normal variables")
+qqline(ws2, col = "gray")
+
+#age
+hist(as2, probability = TRUE)
+qqnorm(as2, main = "Normal QQ plot random normal variables")
+qqline(as2, col = "gray")
+
+#number of zombies killed
+hist(zks2, probability = TRUE)
+qqnorm(zks2, main = "Normal QQ plot random normal variables")
+qqline(zks2, col = "gray")
+
+#years of education
+hist(yedus2, probability = TRUE)
+qqnorm(yedus2, main = "Normal QQ plot random normal variables")
+qqline(yedus2, col = "gray")
+
+#vbhavya Peer comment: I love that you checked using the qqnorm() function! Very thorough!
+```
+
+  Most of the variables are normally distributed, of course this is a little variation like in the number of zombies killed. There is more variation in adherence to the qqnorm line as there was in the original population. As well, because these samples are randomly generated the histograms are not a perfectly normal Guassian distribtion. Compared to the original histograms of the population the qqline graph seem to follow the line more for years of education and number of zombies killed, which were originally not normally distributed. 
+  
+## Challenges Faced
+
+1. Figuring out the formula to calculate standard deviation was hard for me to find and figure out how to use. But once I found it in the modules it was pretty straightforward.
+
+2. Initially both of my ggplot scatter plots would not run and I could not figure out what was going wrong. After 30 minutes of reinstalling r studio and restarting my computer I figured out that I was just simply missing a ')' 
+
+3. Figuring out the difference between standard error and standard deviation is something I still don't understand but I think my code is calculating the right numbers
+
+4. I could not figure out how to take a sample from my data set d because its length was only 10 so I eventually came to the conclusion that I had to take samples from each of the variable columns I would be looking at.
+
+5. I worked on trying to get 99 samples of size 30 for so long. But in the end and after staring at my code for many hours I took samples of each variable in a for loop 
